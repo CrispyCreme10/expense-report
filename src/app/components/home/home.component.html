@@ -1,0 +1,32 @@
+<input type="file" accept=".csv" (change)="fileUpload($event)" />
+<ng-container *ngIf="tableData.headers?.length && tableData.data?.length">
+<div class="container">
+  <div class="table-panel">
+      <table class="styled">
+        <thead>
+          <tr>
+            <th *ngFor="let header of tableData?.headers">{{header}}</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of tableData?.data; index as rowIndex">
+            <td *ngFor="let data of row; index as dataIndex">
+              {{data}}
+            </td>
+            <!-- <td style="display: flex; justify-content: center; gap: 10px;">
+              <fa-icon [icon]="faEdit" size="lg" style="cursor: pointer;" (click)="editRow(rowIndex)"></fa-icon>
+              <fa-icon [icon]="faDelete" size="lg" style="cursor: pointer;" (click)="deleteRow(rowIndex)"></fa-icon>
+            </td> -->
+            <td>
+              <fa-icon [icon]="faE" size="lg" style="cursor: pointer;" (click)="setErin(rowIndex)"></fa-icon>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="details-panel">
+      TEST
+    </div>
+  </div>
+</ng-container>
