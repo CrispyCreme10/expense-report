@@ -36,7 +36,7 @@ export class HomeComponent {
   payments: number = 0;
   returns: number = 0;
   erinTotal: number = 0;
-  remainingBalance: number = 0;
+  totalTransactions: number = 0;
 
   // icons
   faEdit = faPenToSquare;
@@ -100,7 +100,7 @@ export class HomeComponent {
     this.erinTotal = this.dataElements.filter(d => d.memo.toLowerCase() === 'erin')
       .map(d => d.amount)
       .reduce((acc, val) => acc + val, 0);
-    this.remainingBalance = expenses + this.payments + this.returns;
+    this.totalTransactions = this.dataElements?.length;
   }
 
   private getDateRange(arr: Date[]): string {

@@ -12,3 +12,12 @@ body {
   background-color: var(--secondary);
   color: white;
 }
+
+*::-webkit-scrollbar {
+  height: 4px;
+  width: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0);
+}
