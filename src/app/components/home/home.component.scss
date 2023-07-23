@@ -1,0 +1,89 @@
+.mat-mdc-table .mdc-data-table__header-row {
+  background: var(--primary);
+}
+
+.mat-mdc-table .mdc-data-table__header-row th {
+  color: white;
+}
+
+.mat-mdc-table tbody {
+  background: var(--secondary);
+}
+
+td {
+  color: white;
+}
+
+.container {
+  display: flex;
+}
+
+.table-panel {
+  width: 70%;
+}
+
+table.styled {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.styled thead {
+  border-bottom: 1px solid black;
+}
+
+table.styled th, table.styled td {
+  text-align: center;
+  padding: 10px 0;
+}
+
+table.styled tbody tr:nth-child(odd) {
+  background-color: #e9e9e9;
+}
+
+/* table.styled tbody tr:nth-child(even) {
+  
+} */
+
+.details-panel {
+  width: 30%;
+}
+
+.details {
+  margin: 0 20px;
+  border: 3px solid var(--primary);
+  border-radius: 10px;
+}
+
+.stats-title {
+  background: var(--primary);
+  font-size: 1.25rem;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.stats-content {
+  display: flex;
+  padding: 20px;
+}
+
+.stats-col {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  flex: 50%;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat label {
+  font-size: 1.25rem;
+}
+
+.stat span {
+  font-size: 1rem;
+}

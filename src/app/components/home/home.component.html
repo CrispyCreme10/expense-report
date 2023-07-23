@@ -1,32 +1,80 @@
 <input type="file" accept=".csv" (change)="fileUpload($event)" />
-<ng-container *ngIf="tableData.headers?.length && tableData.data?.length">
-<div class="container">
-  <div class="table-panel">
-      <table class="styled">
-        <thead>
-          <tr>
-            <th *ngFor="let header of tableData?.headers">{{header}}</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of tableData?.data; index as rowIndex">
-            <td *ngFor="let data of row; index as dataIndex">
-              {{data}}
-            </td>
-            <!-- <td style="display: flex; justify-content: center; gap: 10px;">
-              <fa-icon [icon]="faEdit" size="lg" style="cursor: pointer;" (click)="editRow(rowIndex)"></fa-icon>
-              <fa-icon [icon]="faDelete" size="lg" style="cursor: pointer;" (click)="deleteRow(rowIndex)"></fa-icon>
-            </td> -->
-            <td>
-              <fa-icon [icon]="faE" size="lg" style="cursor: pointer;" (click)="setErin(rowIndex)"></fa-icon>
-            </td>
-          </tr>
-        </tbody>
+
+<ng-container *ngIf="dataElements?.length">
+  <div class="container">
+    <div class="table-panel">
+      <table mat-table [dataSource]="dataElements">
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <td mat-cell *matCellDef="let element">{{element.index}}</td>
+        </ng-container>
+        <ng-container matColumnDef="transactionDate">
+          <th mat-header-cell *matHeaderCellDef> Transaction Date </th>
+          <td mat-cell *matCellDef="let element">{{element.transactionDate | date:'shortDate'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="postDate">
+          <th mat-header-cell *matHeaderCellDef> Post Date </th>
+          <td mat-cell *matCellDef="let element">{{element.postDate | date:'shortDate'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef> Description </th>
+          <td mat-cell *matCellDef="let element">{{element.description}}</td>
+        </ng-container>
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef> Category </th>
+          <td mat-cell *matCellDef="let element">{{element.category}}</td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef> Type </th>
+          <td mat-cell *matCellDef="let element">{{element.type}}</td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef> Amount </th>
+          <td mat-cell *matCellDef="let element">{{element.amount}}</td>
+        </ng-container>
+        <ng-container matColumnDef="memo">
+          <th mat-header-cell *matHeaderCellDef> Memo </th>
+          <td mat-cell *matCellDef="let element">{{element.memo}}</td>
+        </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr style="background-color: var(--secondary);" mat-row *matRowDef="let myRowData; columns columnsToDisplay"></tr>
       </table>
     </div>
     <div class="details-panel">
-      TEST
+      <div class="details">
+        <div class="stats-title">Stats</div>
+        <div class="stats-content">
+          <div class="stats-col">
+            <div class="stat">
+              <label for="date-range">Date Range:</label>
+              <span>{{dateRange}}</span>
+            </div>
+            <!-- <div class="stat">
+              <label for="date-range">Payments:</label>
+              <span>{{payments | currency}}</span>
+            </div> -->
+            <div class="stat">
+              <label for="date-range">Erin Total:</label>
+              <span>{{erinTotal | currency}}</span>
+            </div>
+          </div>
+          <div class="stats-col">
+            <div class="stat">
+              <label for="date-range">Expenses:</label>
+              <span>{{expenses | currency}}</span>
+            </div>
+            <div class="stat">
+              <label for="date-range">Returns:</label>
+              <span>{{returns | currency}}</span>
+            </div>
+            <!-- <div class="stat">
+              <label for="date-range">Remaining Balance:</label>
+              <span>{{remainingBalance | currency}}</span>
+            </div> -->
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </ng-container>
