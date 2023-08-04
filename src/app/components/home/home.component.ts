@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { faTrashCan, faE } from '@fortawesome/free-solid-svg-icons';
-import { from, map, min } from 'rxjs';
+import { from, map } from 'rxjs';
+import * as pdfjsLib from 'pdfjs-dist'
+import { TextItem } from 'pdfjs-dist/types/src/display/api';
 
 interface TableData {
   headers: string[];
@@ -44,6 +46,8 @@ export class HomeComponent {
   faE = faE;
 
   constructor() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "//cdn.jsdelivr.net/npm/pdfjs-dist@3.9.179/build/pdf.worker.js"
+
     this.tableData = {
       headers: [],
       data: []
@@ -54,11 +58,67 @@ export class HomeComponent {
     const files = (event.target as HTMLInputElement).files;
     if (!files) return;
 
-    this.buildTableArrayFromCSV(files.item(0));
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type === 'application/pdf') {
+        console.log('PDF File: ', file);
+        this.buildTableArrayFromPDF(file);
+      } else if (file.type === 'text/csv') {
+        console.log('CSV File: ', file);
+        this.buildTableArrayFromCSV(file);
+      }
+    }
+
   }
 
-  buildTableArrayFromCSV(file: File | null) {
-    from(file?.text() ?? '').pipe(
+  async buildTableArrayFromPDF(file: File) { 
+    const include = [3, 4];
+    const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+    const countPromises = []; // collecting all page promises
+    for (let i = 1; i <= pdf.numPages; i++) {
+      if (!include.includes(i)) continue;
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      countPromises.push(textContent.items.map((s) => (s as TextItem).str).join(''));
+    }
+    const pageContents = await Promise.all(countPromises);
+    console.log(pageContents);
+
+    // cleanup
+    const str = pageContents.join('');
+    const matches = [...str.matchAll(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/g)].map(m => new Date(m['0']));
+    const split = str.split(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/).slice(1);
+    console.log(matches);
+    console.log(split);
+
+    const cleanedData = split.map(s => {
+      const x = s.trim().split(' ');
+      return {
+        tranAmount: Number(x[0].replace('$', '')),
+        desc: x.slice(1).join(' ')
+      }
+    })
+
+    console.log(cleanedData);
+
+    for (let i = 0; i < matches.length; i++) {
+      const date = matches[i];
+      const x = cleanedData[i];
+      this.addDataElement({
+        index: this.dataElements.length + 1,
+        transactionDate: date,
+        postDate: date,
+        description: x.desc,
+        category: '',
+        type: '',
+        amount: x.tranAmount,
+        memo: ''
+      })
+    }
+  }
+
+  buildTableArrayFromCSV(file: File) {
+    from(file.text() ?? '').pipe(
       map(text => text.split('\n')),
       map(res => res.map(line => line.split(','))
         .filter(lineArr => lineArr.some(item => item !== '')))
@@ -69,20 +129,27 @@ export class HomeComponent {
 
       if (res?.length > 1) {
         // this.tableData.data = res.slice(1);
-        this.dataElements = res.slice(1).map((transaction, index) => ({
-          index: index + 1,
-          transactionDate: new Date(transaction[0]),
-          postDate: new Date(transaction[1]),
-          description: transaction[2],
-          category: transaction[3],
-          type: transaction[4],
-          amount: Number(transaction[5]),
-          memo: transaction[6]
-        }));
+        const arr = res.slice(1);
+        for (let i = 0; i < arr.length; i++) {
+          this.addDataElement({
+            index: this.dataElements.length + 1,
+            transactionDate: new Date(arr[i][0]),
+            postDate: new Date(arr[i][1]),
+            description: arr[i][2],
+            category: arr[i][3],
+            type: arr[i][4],
+            amount: Number(arr[i][5]),
+            memo: arr[i][6]
+          });
+        }
       }
-
-      this.buildStats();
     });
+  }
+
+  addDataElement(dataElement: DataElement) {
+    console.log(dataElement);
+    dataElement.index = this.dataElements.length + 1;
+    this.dataElements.push(dataElement);
   }
 
   private buildStats() {

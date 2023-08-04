@@ -10,6 +10,10 @@
   background: var(--secondary);
 }
 
+.mat-mdc-cell {
+  max-width: 200px;
+}
+
 td {
   color: white;
 }

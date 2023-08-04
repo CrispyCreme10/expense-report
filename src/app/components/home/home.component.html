@@ -1,4 +1,4 @@
-<input type="file" accept=".csv" (change)="fileUpload($event)" />
+<input type="file" accept=".csv, .pdf" (change)="fileUpload($event)" multiple/>
 
 <ng-container *ngIf="dataElements?.length">
   <div class="container">
