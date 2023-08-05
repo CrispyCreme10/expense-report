@@ -4,6 +4,7 @@ import { faTrashCan, faE } from '@fortawesome/free-solid-svg-icons';
 import { from, map } from 'rxjs';
 import * as pdfjsLib from 'pdfjs-dist'
 import { TextItem } from 'pdfjs-dist/types/src/display/api';
+import { saveAs } from 'file-saver'
 
 interface TableData {
   headers: string[];
@@ -94,27 +95,39 @@ export class HomeComponent {
     const cleanedData = split.map(s => {
       const x = s.trim().split(' ');
       return {
-        tranAmount: Number(x[0].replace('$', '')),
-        desc: x.slice(1).join(' ')
+        amount: Number(x[0].replace('$', '')) * -1,
+        desc: x.slice(1).join(' ').replaceAll(',', '')
       }
     })
 
     console.log(cleanedData);
 
+    // for (let i = 0; i < matches.length; i++) {
+    //   const date = matches[i];
+    //   const x = cleanedData[i];
+    //   this.addDataElement({
+    //     index: this.dataElements.length + 1,
+    //     transactionDate: date,
+    //     postDate: date,
+    //     description: x.desc,
+    //     category: '',
+    //     type: '',
+    //     amount: x.tranAmount,
+    //     memo: ''
+    //   })
+    // }
+
+    let data = 'Transaction Date,Account,Description,Category,Type,Amount,Memo\r\n';
     for (let i = 0; i < matches.length; i++) {
       const date = matches[i];
+      const dateFmt = Intl.DateTimeFormat('en-us', { month: '2-digit', day: '2-digit', year: 'numeric'}).format(date);
       const x = cleanedData[i];
-      this.addDataElement({
-        index: this.dataElements.length + 1,
-        transactionDate: date,
-        postDate: date,
-        description: x.desc,
-        category: '',
-        type: '',
-        amount: x.tranAmount,
-        memo: ''
-      })
+      data += `${dateFmt},M1,${x.desc},,Sale,${x.amount},\r\n`;
     }
+
+    console.log(data);
+    var blob = new Blob([data], {type: 'text/csv'});
+    saveAs(blob, `tran_${Date.now()}.csv`);
   }
 
   buildTableArrayFromCSV(file: File) {
